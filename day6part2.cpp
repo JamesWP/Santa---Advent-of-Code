@@ -2,57 +2,37 @@
 #include <fstream>
 #include <bitset>
 #include <vector>
+#include <numeric>
 
 const int gridSize = 1000;
-using lightRow = std::bitset<gridSize>;
+using lightRow = std::vector<int>;
 using lightRows = std::vector<lightRow>;
 
-std::ostream& operator<<(std::ostream &strm, const lightRows &a) {
-  for(auto &row:a){
-    for(int index=0;index<gridSize;index++){
-      bool light = row[index];
-      strm << (light? "[]":"<>");
-    }
-    strm << std::endl;
-  }
-  return strm;
-}
+template<class V>
+V max(V a, V b) {return (a>b)? a:b;}
 
-lightRow
-ones(int startIndex,int endIndex)
-{
-  lightRow r;
-  for (int i=startIndex;i <= endIndex;i++)
-    r[i] = true;
-  return r;
-}
-
-lightRow
-zeros(int startIndex,int endIndex)
-{
-  lightRow r;
-  r.set();
-  for (int i=startIndex;i <= endIndex;i++)
-    r[i] = false;
-  return r;
+void
+add(std::vector<int> &row,const int x,const int x2,const int amt) {
+  for(int index = x;index<=x2;index++)
+    row[index] = max(row[index] + amt,0);
 }
 
 void
 toggle(lightRows &grid,const int x,const int y,const int x2,const int y2) {
   for(int lineNo = y;lineNo<=y2;lineNo++)
-    grid[lineNo] ^= ones(x,x2);
+    add(grid[lineNo],x,x2,2);
 }
 
 void
 on(lightRows &grid,const int x,const int y,const int x2,const int y2) {
   for(int lineNo = y;lineNo<=y2;lineNo++)
-    grid[lineNo] |= ones(x,x2);
+    add(grid[lineNo],x,x2,1);
 }
 
 void
 off(lightRows &grid,const int x,const int y,const int x2,const int y2) {
   for(int lineNo = y;lineNo<=y2;lineNo++)
-    grid[lineNo] &= zeros(x,x2);
+    add(grid[lineNo],x,x2,-1);
 }
 
 int
@@ -61,8 +41,7 @@ main(int argc,char *argv[])
   std::fstream f;
   f.open(argv[1], std::fstream::in);
 
-
-  lightRows grid(gridSize);
+  lightRows grid(gridSize,lightRow(gridSize));
 
   do{
     std::string command,subcommand,ignore;
@@ -82,7 +61,6 @@ main(int argc,char *argv[])
     f >> y1;
 
     if(f.eof()) break;
-    //std::cout << command << ":" << subcommand << " (" << x << "," << y << ") -> (" << x1 << "," << y1 << ") " << std::endl;
 
     if(command=="turn")
       if(subcommand=="on")
@@ -93,15 +71,10 @@ main(int argc,char *argv[])
       toggle(grid,x,y,x1,y1);
   }while(!f.eof());
 
-  //std::cout << grid;
-
-
-
-
-  int lightsOn = 0;
+  uint lightsOn = 0;
 
   for(auto &row:grid)
-    lightsOn += row.count();
+    lightsOn += std::accumulate(row.begin(), row.end(), 0);
 
   std::cout << "Lights On: " << lightsOn;
 
