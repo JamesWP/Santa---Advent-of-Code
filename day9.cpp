@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
-#import <cstdint>
-#import <map>
-#import <set>
-#import <climits>
+#include <cstdint>
+#include <map>
+#include <set>
+#include <climits>
 
 template<class F,class S>
 using tuple = std::pair<F,S>;

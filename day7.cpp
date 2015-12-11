@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#import <regex>
-#import <map>
-#import <cctype>
-#import <cstdint>
+#include <regex>
+#include <map>
+#include <cctype>
+#include <cstdint>
 
 using identifier = std::string;
 using valtype = uint16_t;
