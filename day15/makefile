@@ -1,4 +1,4 @@
-CFLAGS=-std=c++11 -fsanitize=address
+CFLAGS=-std=c++11
 #CFLAGS=-std=c++11
 CFLAGS+=-stdlib=libc++
 #flags for test.c
